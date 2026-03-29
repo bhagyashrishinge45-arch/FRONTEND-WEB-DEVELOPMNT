@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Learning Platform</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f6f9;
+}
+
+header{
+background:#4a6cf7;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.container{
+padding:30px;
+}
+
+button{
+background:#4a6cf7;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+border-radius:5px;
+}
+
+input{
+padding:10px;
+margin:5px 0;
+width:100%;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:8px;
+margin-bottom:20px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.video{
+width:100%;
+max-width:700px;
+}
+
+.progress{
+height:20px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+background:#4a6cf7;
+width:0%;
+}
+
+.quiz-question{
+margin:15px 0;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>LearnHub</h2>
+<div id="userArea"></div>
+</header>
+
+<div class="container">
+
+<!-- LOGIN -->
+<div id="authSection" class="card">
+
+<h3>Login / Register</h3>
+
+<input id="username" placeholder="Enter username">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<!-- COURSE AREA -->
+
+<div id="courseSection" class="hidden">
+
+<div class="card">
+
+<h3>Lesson 1: Introduction to Web Development</h3>
+
+<video class="video" controls onended="completeLesson()">
+<source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+</video>
+
+<p>Watch the video to complete the lesson.</p>
+
+</div>
+
+<!-- QUIZ -->
+
+<div class="card">
+
+<h3>Quiz</h3>
+
+<div class="quiz-question">
+<p>1. What language is used to structure web pages?</p>
+<label><input type="radio" name="q1" value="HTML"> HTML</label><br>
+<label><input type="radio" name="q1" value="Python"> Python</label><br>
+<label><input type="radio" name="q1" value="Java"> Java</label>
+</div>
+
+<button onclick="submitQuiz()">Submit Quiz</button>
+
+<p id="quizResult"></p>
+
+</div>
+
+<!-- PROGRESS -->
+
+<div class="card">
+
+<h3>Your Progress</h3>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<p id="progressText">0% Completed</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let progress = 0
+
+function login(){
+
+let username=document.getElementById("username").value
+
+if(username===""){
+alert("Enter username")
+return
+}
+
+localStorage.setItem("user",username)
+
+document.getElementById("authSection").classList.add("hidden")
+document.getElementById("courseSection").classList.remove("hidden")
+
+document.getElementById("userArea").innerText="Welcome "+username
+
+loadProgress()
+
+}
+
+function completeLesson(){
+
+progress+=50
+saveProgress()
+updateProgress()
+
+}
+
+function submitQuiz(){
+
+let answer=document.querySelector('input[name="q1"]:checked')
+
+if(!answer){
+alert("Select answer")
+return
+}
+
+if(answer.value==="HTML"){
+
+document.getElementById("quizResult").innerText="Correct!"
+progress+=50
+
+}else{
+
+document.getElementById("quizResult").innerText="Wrong answer"
+}
+
+saveProgress()
+updateProgress()
+
+}
+
+function updateProgress(){
+
+document.getElementById("progressBar").style.width=progress+"%"
+document.getElementById("progressText").innerText=progress+"% Completed"
+
+}
+
+function saveProgress(){
+
+localStorage.setItem("progress",progress)
+
+}
+
+function loadProgress(){
+
+let saved=localStorage.getItem("progress")
+
+if(saved){
+progress=parseInt(saved)
+}
+
+updateProgress()
+
+}
+
+window.onload=function(){
+
+let user=localStorage.getItem("user")
+
+if(user){
+
+document.getElementById("authSection").classList.add("hidden")
+document.getElementById("courseSection").classList.remove("hidden")
+
+document.getElementById("userArea").innerText="Welcome "+user
+
+loadProgress()
+
+}
+
+}
+
+</script>
+
+</body>
